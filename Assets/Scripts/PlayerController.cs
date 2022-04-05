@@ -45,7 +45,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private Camera _cam;
 
 
-
+    [SerializeField] private int maxHealth = 100;
+    private int _currentHealth;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -53,6 +54,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         _cam = Camera.main;
 
         SwitchGun();
+
+        _currentHealth = maxHealth;
+
+        UIController.instance.healthSlider.maxValue = maxHealth;
+        UIController.instance.healthSlider.value = _currentHealth;
 
         // Transform newTrans = SpawnManager.instance.GetSpawnPoint();
         // transform.position = newTrans.position;
@@ -232,7 +238,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
 
-                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName);
+                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, allGuns[_selectedGun].shotDamage);
             }
             else
             {
@@ -263,14 +269,27 @@ public class PlayerController : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DealDamage(string damager)
+    public void DealDamage(string damager, int damageAmount)
     {
-        TakeDamage(damager);
+        TakeDamage(damager, damageAmount);
     }
 
-    public void TakeDamage(string damager)
+    public void TakeDamage(string damager, int damageAmount)
     {
-        gameObject.SetActive(false);
+        if(photonView.IsMine)
+        {
+
+            _currentHealth -= damageAmount;
+
+            if(_currentHealth <= 0)
+            {
+                _currentHealth = 0;
+
+                PlayerSpawner.instance.Die(damager);
+            }
+
+            UIController.instance.healthSlider.value = _currentHealth;
+        }
     }
 
     void SwitchGun()

@@ -82,6 +82,7 @@ MonoBehaviour:
   isAutomatic: 1
   timeBetweenShots: 0.1
   heatPerShot: 1
+  shotDamage: 15
 --- !u!1 &6976499767031667684
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,6 +132,7 @@ MonoBehaviour:
   isAutomatic: 1
   timeBetweenShots: 0.35
   heatPerShot: 5
+  shotDamage: 60
 --- !u!1 &6976499767131381198
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,6 +367,7 @@ MonoBehaviour:
   invertLook: 0
   playerHitImpact: {fileID: 8747907457901919803, guid: 4da32a24606189449847adf92e3322c4, type: 3}
   muzzleDisplayTime: 0.016666668
+  maxHealth: 100
 --- !u!143 &6976499767516088643
 CharacterController:
   m_ObjectHideFlags: 0
@@ -471,6 +474,7 @@ MonoBehaviour:
   isAutomatic: 0
   timeBetweenShots: 0.1
   heatPerShot: 2
+  shotDamage: 25
 --- !u!1 &6976499768027025423
 GameObject:
   m_ObjectHideFlags: 0

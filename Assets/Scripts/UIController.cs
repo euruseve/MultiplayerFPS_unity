@@ -6,15 +6,23 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
-
     public static UIController instance;
+
     public Slider weaponTempSlider;
+    public TMP_Text overheatedMessage;
+
+    public Slider healthSlider;
+
+
+    public GameObject deathScreen;
+    public TMP_Text deathText;
+
+
     void Awake()
     {
         instance = this;
     }
 
-    public TMP_Text overheatedMessage;
 
     // Start is called before the first frame update
     void Start()
