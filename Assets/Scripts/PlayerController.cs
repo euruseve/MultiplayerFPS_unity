@@ -52,9 +52,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private Transform gunHolder;
 
 
+    public Material[] allSkins;
 
+    public float adsSpeed = 5f;
 
     private int _currentHealth;
+
+    public Transform adsOutPoint, adsInPoint;
+
+    public AudioSource slow, fast;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -80,6 +86,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             gunHolder.localPosition = Vector3.zero;
             gunHolder.localRotation = Quaternion.identity;
         }
+
+
+        playerModel.GetComponent<Renderer>().material = allSkins[photonView.Owner.ActorNumber % allSkins.Length];
+
 
         // Transform newTrans = SpawnManager.instance.GetSpawnPoint();
         // transform.position = newTrans.position;
@@ -138,10 +148,31 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if(Input.GetKey(KeyCode.LeftShift))
             {
                 _activeMoveSpeed = runSpeed;
+
+                if(!fast.isPlaying && _moveDirection != Vector3.zero)
+                {
+                    fast.Play();
+                    slow.Stop();
+                }
             }
-            else{
+            else
+            {
                 _activeMoveSpeed = moveSpeed;
+
+                if(!slow.isPlaying && _moveDirection != Vector3.zero)
+                {
+                    fast.Stop();
+                    slow.Play();
+                }
             }
+
+
+            if(_moveDirection == Vector3.zero || !_isGrounded)
+            {
+                fast.Stop();
+                slow.Stop();
+            }
+
 
             float yVal = _movement.y;
             
@@ -252,13 +283,27 @@ public class PlayerController : MonoBehaviourPunCallbacks
             anim.SetFloat("speed", _moveDirection.magnitude);
 
 
+            if(Input.GetMouseButton(1))
+            {
+                _cam.fieldOfView =  Mathf.Lerp(_cam.fieldOfView, allGuns[_selectedGun].adsZoom, adsSpeed * Time.deltaTime);
+                gunHolder.position = Vector3.Lerp(gunHolder.position, adsInPoint.position, adsSpeed * Time.deltaTime);
+            }
+            else
+            {
+                _cam.fieldOfView =  Mathf.Lerp(_cam.fieldOfView, 60f, adsSpeed * Time.deltaTime);
+                gunHolder.position = Vector3.Lerp(gunHolder.position, adsOutPoint.position, adsSpeed * Time.deltaTime);
+            }
+
+
+
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 Cursor.lockState = CursorLockMode.None;
+                
             }
             else if(Cursor.lockState == CursorLockMode.None)
             {
-                if(Input.GetMouseButtonDown(0))
+                if(Input.GetMouseButtonDown(0) && !UIController.instance.optionsScreen.activeInHierarchy)
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                 }
@@ -304,6 +349,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         allGuns[_selectedGun].muzzleFlash.SetActive(true);
         _muzzleCounter = muzzleDisplayTime;
+
+        allGuns[_selectedGun].shotSound.Stop();
+        allGuns[_selectedGun].shotSound.Play();
 
     }
 
