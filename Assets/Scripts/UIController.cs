@@ -25,6 +25,9 @@ public class UIController : MonoBehaviour
     public LeaderboardPlayer leaderboardPlayerDisplay;
 
 
+    public GameObject endScreen;
+
+    public TMP_Text timerText;
 
 
     void Awake()

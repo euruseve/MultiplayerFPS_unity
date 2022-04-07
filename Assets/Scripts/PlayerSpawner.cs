@@ -56,13 +56,18 @@ public class PlayerSpawner : MonoBehaviour
 
         PhotonNetwork.Destroy(_player);
 
+        _player = null;
+
         UIController.instance.deathScreen.SetActive(true);
 
         yield return new WaitForSeconds(respawnTime);
 
         UIController.instance.deathScreen.SetActive(false);
 
-        SpawnPlayer();
+        if(MatchManager.instance.state == MatchManager.GameState.Playing && _player == null)
+        {
+            SpawnPlayer();
+        }
     }
 
 }

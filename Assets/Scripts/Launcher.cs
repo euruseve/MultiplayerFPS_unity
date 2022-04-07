@@ -32,7 +32,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject nameInputScreen;
     [SerializeField] private TMP_InputField nameInput;
-    private bool _hasSetNickName;
+    public static bool hasSetNickName;
 
 
     [SerializeField] private string levelToPlay;
@@ -40,6 +40,8 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject roomTestButton;
 
+    public string[] allMaps;
+    public bool changeMapBetweenRouns = true;
 
     void Awake()
     {
@@ -60,6 +62,8 @@ public class Launcher : MonoBehaviourPunCallbacks
         roomTestButton.SetActive(true);
 #endif
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
 
@@ -80,7 +84,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = Random.Range(0, 1000).ToString();
         ListAllPlayers();
 
-        if(!_hasSetNickName)
+        if(!hasSetNickName)
         {
             CloseMenus();
             nameInputScreen.SetActive(true);
@@ -268,7 +272,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             CloseMenus();
             menuButtons.SetActive(true);
 
-            _hasSetNickName = true;
+            hasSetNickName = true;
         }
     }
 
@@ -287,7 +291,8 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void StartGame()
     {
-        PhotonNetwork.LoadLevel(levelToPlay);
+        //PhotonNetwork.LoadLevel(levelToPlay);
+        PhotonNetwork.LoadLevel(allMaps[Random.Range(0, allMaps.Length)]);
     }
 
     public void QuitGame()
